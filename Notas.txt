@@ -1,0 +1,4 @@
+Para arrancar el proyecto se introduce:
+
+    npm run dev
+
