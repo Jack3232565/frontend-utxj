@@ -27,14 +27,15 @@
   <v-main class="bg-grey-lighten-5">
     <v-container fluid class="pa-4">
 
-      <v-card flat class="bg-transparent mb-4">
+      <v-card flat class="bg-transparent mb-2">
         <v-row no-gutters align="center" justify="space-between">
-          <v-col cols="auto"><img src="/logos/mascota.png" alt="Mascota" style="height: 65px; object-fit: contain;"></v-col>
+          
+          <v-col cols="auto"><img src="/logos/industrial 1.png" alt="Logo Industrial" style="height: 90px; object-fit: contain;"></v-col>
           <v-col class="text-center px-4">
             <h1 class="text-h5 font-weight-black text-grey-darken-3 text-uppercase">{{ tab === 'gestion' ? 'Gestión de Aspirantes' : 'Dashboard y Agenda' }}</h1>
             <div class="text-caption text-grey-darken-1">Ciclo Escolar 2026 - Universidad Tecnológica de Xicotepec de Juárez</div>
           </v-col>
-          <v-col cols="auto"><img src="/logos/industrial 1.png" alt="Logo Industrial" style="height: 60px; object-fit: contain;"></v-col>
+          <v-col cols="auto"><img src="/logos/mascota.png" alt="Mascota" style="height: 90px; object-fit: contain;"></v-col>
         </v-row>
       </v-card>
 
@@ -99,6 +100,18 @@
                   <v-btn icon="mdi-whatsapp" size="x-small" color="green" variant="text" @click="enviarWhatsapp(item)"></v-btn>
                 </div>
               </template>
+
+              <template v-slot:item.fecha_registro="{ item }">
+                <div class="d-flex flex-column">
+                  <span class="font-weight-medium mr-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    {{ formatearFechaLectura(item.fecha_registro) }}
+                  </span>
+                  <span class="text-caption text-teal-darken-1 font-weight-medium" style="font-size: 0.65rem;">
+                    <v-icon icon="mdi-clock-outline" size="10" class="mr-1"></v-icon>
+                    {{ new Date(item.fecha_registro).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
+                  </span>
+                </div>
+              </template>
               
               <template v-slot:item.notas_admin="{ item }">
                 <div v-if="item.notas_admin && item.notas_admin.length > 2">
@@ -152,12 +165,13 @@
                  </div>
               </v-card>
             </v-col>
+            
             <v-col cols="12" sm="6" md="3">
               <v-card class="mx-auto elevation-2 rounded-xl d-flex align-center px-4 border bg-red-lighten-5" height="110">
                  <v-avatar color="red-darken-2" size="40" class="mr-3"><v-icon icon="mdi-phone-alert" size="24" color="white"></v-icon></v-avatar>
                  <div>
                    <div class="text-h5 text-red-darken-4 font-weight-bold">{{ totalPorContactar }}</div>
-                   <div class="text-caption text-red-darken-2 lh-1">No Constestan</div>
+                   <div class="text-caption text-red-darken-2 lh-1">No Contestan</div>
                  </div>
               </v-card>
             </v-col>
@@ -192,11 +206,47 @@
               </v-card>
             </v-col>
 
+            <v-col cols="12" sm="12" md="6">
+              <v-card class="h-100 elevation-2 rounded-lg border overflow-hidden">
+                <v-card-title class="text-subtitle-2 font-weight-black text-uppercase py-3 px-4 d-flex align-center" style="background: linear-gradient(45deg, #f8f9fa, #ffffff);">
+                  <v-icon start color="blue-darken-4" size="small" class="mr-2">mdi-chart-line</v-icon>
+                  <span class="text-blue-darken-4">3. Registro Mensual de Aspirantes</span>
+                </v-card-title>
+                
+                <v-divider></v-divider>
+
+            <v-card-text class="pa-4">
+              <div class="chart-container">
+                <Line 
+                  v-if="chartData.mensual && chartData.mensual.labels" 
+                  :data="chartData.mensual" 
+                  :options="opcionesGraficaMensual" 
+                />
+                <div v-else class="d-flex flex-column align-center justify-center fill-height text-grey">
+                  <v-progress-circular indeterminate color="teal"></v-progress-circular>
+                  <p class="mt-2">Calculando tendencias...</p>
+                </div>
+              </div>
+            </v-card-text>
+              </v-card>
+            </v-col>
+
+            <v-col cols="12" md="6">
+              <v-card class="h-100 elevation-3 rounded-lg border mt-3">
+                <v-card-title class="text-caption font-weight-bold text-uppercase text-teal-darken-4 bg-grey-lighten-4">4. Top Localidades</v-card-title>
+                <v-card-text style="height: 280px; position: relative;" class="pa-2">
+                  <Bar v-if="chartData.localidades.labels" :data="chartData.localidades" :options="opcionesLocalidades" />
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <v-row>
             <v-col cols="12" md="6">
               <v-card class="h-100 elevation-3 rounded-lg border mt-3">
                 <v-card-title class="text-caption font-weight-bold text-uppercase text-teal-darken-4 bg-grey-lighten-4 d-flex justify-space-between align-center px-3 py-1">
                   <v-btn icon="mdi-chevron-left" variant="text" size="small" @click="mesAnterior" color="teal-darken-3"></v-btn>
-                  <span>3. Agenda ({{ nombreMesSeleccionado }})</span>
+                  <span>5. Agenda ({{ nombreMesSeleccionado }})</span>
                   <v-btn icon="mdi-chevron-right" variant="text" size="small" @click="mesSiguiente" color="teal-darken-3"></v-btn>
                 </v-card-title>
                 <v-card-text class="pa-2 pt-0">
@@ -213,16 +263,6 @@
                 </v-card-text>
               </v-card>
             </v-col>
-
-            <v-col cols="12" md="6">
-              <v-card class="h-100 elevation-3 rounded-lg border mt-3">
-                <v-card-title class="text-caption font-weight-bold text-uppercase text-teal-darken-4 bg-grey-lighten-4">4. Top Localidades</v-card-title>
-                <v-card-text style="height: 280px; position: relative;" class="pa-2">
-                  <Bar v-if="chartData.localidades.labels" :data="chartData.localidades" :options="opcionesLocalidades" />
-                </v-card-text>
-              </v-card>
-            </v-col>
-
           </v-row>
         </v-window-item>
       </v-window>
@@ -258,8 +298,20 @@
                 <v-col cols="12" sm="6">
                   <v-text-field v-model="formItem.telefono" label="Teléfono (WhatsApp) *" variant="outlined" density="compact" prepend-inner-icon="mdi-whatsapp" type="tel" maxlength="10" :rules="[reglas.requerido, reglas.telefonoMX]" @input="filtrarNumeros"></v-text-field>
                 </v-col>
-                <v-col cols="12" sm="6"><v-text-field v-model="formItem.localidad_origen" label="Localidad" variant="outlined" density="compact" prepend-inner-icon="mdi-map-marker"></v-text-field></v-col>
-                
+                <v-col cols="12" sm="6">
+                  <v-combobox
+                    v-model="formItem.localidad_origen"
+                    :items="listaLocalidadesUnicas"
+                    label="Localidad *"
+                    variant="outlined"
+                    density="compact"
+                    prepend-inner-icon="mdi-map-marker"
+                    :rules="[reglas.requerido]"
+                    hint="Selecciona una o escribe una nueva"
+                    persistent-hint
+                    clearable
+                  ></v-combobox>
+                </v-col>
                 <v-col cols="12">
                   <v-select v-model="formItem.carrera_interes" :items="carrerasList" label="Carrera de Interés *" variant="outlined" density="compact" prepend-inner-icon="mdi-school" :rules="[reglas.requerido]"></v-select>
                 </v-col>
@@ -326,11 +378,12 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '../services/api';
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, ArcElement, CategoryScale, LinearScale } from 'chart.js';
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, ArcElement, CategoryScale, LinearScale, LineElement, PointElement } from 'chart.js';
 import { Bar } from 'vue-chartjs';
+import { Line } from 'vue-chartjs';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend, ChartDataLabels);
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend, ChartDataLabels, LineElement, PointElement);
 
 const router = useRouter();
 
@@ -339,7 +392,8 @@ const rail = ref(false);
 const tab = ref('gestion'); 
 
 const listaAlumnos = ref([]);
-const chartData = ref({ carreras: {}, visitas: {}, localidades: {}, preinscritos: {} });
+// Busca esta línea y déjala así:
+const chartData = ref({ carreras: {}, visitas: {}, localidades: {}, preinscritos: {}, mensual: {} });
 const cargando = ref(false);
 const busqueda = ref('');
 const filtroContactar = ref(false); // NUEVO FILTRO
@@ -446,6 +500,34 @@ const procesarGraficas = (d) => {
     chartData.value.carreras = { labels: d.carreras.labels, datasets: [{ label: 'Aspirantes', backgroundColor: d.carreras.labels.map(l => mapaCarreras[l]?.color), data: d.carreras.data, borderRadius: 5, barPercentage: 0.6 }] };
     if(d.preinscritos) chartData.value.preinscritos = { labels: d.preinscritos.labels, datasets: [{ label: 'Preinscritos', backgroundColor: d.preinscritos.labels.map(l => mapaCarreras[l]?.color), data: d.preinscritos.data, borderRadius: 5, barPercentage: 0.6 }] };
     chartData.value.localidades = { labels: d.localidades.labels, datasets: [{ label: '', backgroundColor: generarColores(d.localidades.labels.length), data: d.localidades.data, borderRadius: 4 }] };
+
+
+const todosLosMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto'];
+    const mesActualIndex = new Date().getMonth(); // 0 = Enero, 1 = Febrero...
+    
+    // FILTRO DINÁMICO: Solo mostramos desde Enero hasta el mes actual (máximo Agosto)
+    // Si estamos en Marzo, solo devolverá ['Enero', 'Febrero', 'Marzo']
+    const mesesVisibles = todosLosMeses.slice(0, Math.min(mesActualIndex + 1, 8));
+
+    chartData.value.mensual = {
+      labels: mesesVisibles,
+      datasets: carrerasList.map(carrera => ({
+        label: carrera.replace('T.S.U. Mantenimiento ', '').replace('Ingeniería en ', 'Ing. '),
+        borderColor: mapaCarreras[carrera]?.color || '#ccc',
+        backgroundColor: mapaCarreras[carrera]?.color + '33', // Color con transparencia para el área
+        data: mesesVisibles.map((_, index) => {
+          return listaAlumnos.value.filter(a => {
+            const fecha = new Date(a.fecha_registro);
+            return a.carrera_interes === carrera && fecha.getMonth() === index;
+          }).length;
+        }),
+        tension: 0.4, // Curva suave en la línea
+        fill: true,   // Relleno bajo la línea para estilo "Area Chart"
+        pointRadius: 5,
+        pointHoverRadius: 8
+      }))
+    };
+
 };
 
 // --- CRUD & ACCIONES RÁPIDAS ---
@@ -474,6 +556,7 @@ const encabezados = [
   { title: 'Preinscrito', key: 'preinscrito', align: 'center' }, 
   { title: 'Nombre', key: 'nombre' }, { title: 'Apellido', key: 'ap_paterno' }, 
   { title: 'Teléfono', key: 'telefono' }, { title: 'Carrera', key: 'carrera_interes' }, 
+  { title: 'Registro', key: 'fecha_registro', align: 'start', sortable: true }, // NUEVA COLUMNA
   { title: 'Nota', key: 'notas_admin', align: 'center' }, { title: 'Visita', key: 'visita_industrial' }, 
   { title: 'Acciones', key: 'acciones' }
 ];
@@ -484,6 +567,8 @@ const abrirDialogo = (item = null) => {
     if(formRef.value) formRef.value.resetValidation();
     dialogoEditar.value = true;
 };
+
+const localidadesSugeridas = ['Xicotepec de Juárez', 'Huauchinango', 'Juan Galindo (Nuevo Necaxa)', 'Zihuateutla', 'Tlaxcalantongo', 'Tlacuilotepec', 'Jalpan', 'Tlaxco', 'Venustiano Carranza', 'Pantepec', 'Francisco Z. Mena', 'Villa Ávila Camacho (La Ceiba)'];
 
 const cerrarDialogo = () => { dialogoEditar.value = false; };
 
@@ -567,9 +652,69 @@ const subirExcel = async () => {
     }
 };
 
+
+
+const opcionesGraficaMensual = { 
+  responsive: true, 
+  maintainAspectRatio: false,
+  plugins: { 
+    legend: { display: true, position: 'top', labels: { usePointStyle: true } },
+    datalabels: { display: false }
+  }, 
+  scales: { 
+    x: { 
+      grid: { display: false },
+      ticks: { font: { weight: 'bold' } }
+    }, 
+    y: { 
+      beginAtZero: true, 
+      ticks: { stepSize: 1 },
+      title: { display: true, text: 'Aspirantes' }
+    } 
+  } 
+};
+
+
+const formatearFechaLectura = (fechaStr) => {
+  if (!fechaStr) return '---';
+  const fecha = new Date(fechaStr);
+  
+  // Obtenemos el nombre del mes
+  let mes = fecha.toLocaleDateString('es-MX', { month: 'long' });
+  // Capitalizamos la primera letra (Marzo)
+  mes = mes.charAt(0).toUpperCase() + mes.slice(1);
+  
+  // Obtenemos el día con dos dígitos (06)
+  const dia = fecha.getDate().toString().padStart(2, '0');
+  
+  // Obtenemos el año (2026)
+  const anio = fecha.getFullYear();
+  
+  return `${mes}/${dia}/${anio}`;
+};
+
+
+
+// Esto genera una lista limpia y sin repetir de todas las localidades actuales
+const listaLocalidadesUnicas = computed(() => {
+  const localidades = listaAlumnos.value
+    .map(a => a.localidad_origen)
+    .filter(loc => loc && loc.trim() !== ''); // Quitamos vacíos
+  
+  // Usamos Set para eliminar duplicados y sort para ordenar de A-Z
+  return [...new Set(localidades)].sort();
+});
+
+
+
 const cerrarSesion = () => { localStorage.removeItem('token'); router.push('/login'); };
 
 onMounted(() => { precargarLogos(); cargarTodo(); });
+
+
+
+
+
 </script>
 
 <style scoped>
@@ -582,4 +727,34 @@ onMounted(() => { precargarLogos(); cargarTodo(); });
 .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
 .lh-1 { line-height: 1.1 !important; }
+
+
+
+/* Mejora las sombras y el borde de las tarjetas de gráficas */
+.v-card.border {
+  border-color: rgba(0, 0, 0, 0.05) !important;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.v-card.border:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* Hace que el contenedor de la gráfica sea flexible */
+.chart-container {
+  position: relative;
+  height: 280px;
+  width: 100%;
+}
+
+/* Estilo para que los títulos de las gráficas no se corten en móviles */
+.text-caption {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+
 </style>
