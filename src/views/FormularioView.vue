@@ -1,6 +1,12 @@
 <template>
   <v-container class="bg-grey-lighten-4 fill-height align-start pt-md-8" fluid>
 
+    <div class="d-flex justify-end w-100 px-4 mb-4">
+      <v-btn variant="text" color="teal-darken-3" prepend-icon="mdi-shield-account" size="small" to="/login">
+        Acceso Administrativo
+      </v-btn>
+    </div>
+    
     <v-row justify="center" class="w-100 mx-auto" style="max-width: 1200px;">
       
       <v-col cols="12" md="7" lg="8">
@@ -301,3 +307,4 @@ const mostrarMensaje = (texto, color) => {
 .fadeIn { animation-name: fadeIn; }
 .border-dashed { border-style: dashed !important; border-width: 2px !important; }
 </style>
+
