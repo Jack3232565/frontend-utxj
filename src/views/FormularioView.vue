@@ -53,7 +53,7 @@
 
       <v-list-item prepend-icon="mdi-cursor-default-click" class="mb-2">
         <v-list-item-title class="text-wrap">
-          <strong>Selecciona "Aspirantes":</strong> Dentro del portal oficial, busca la opción de registro para alumnos de nuevo ingreso.
+          <strong>Selecciona "Aspirantes":</strong> Dentro del portal oficial, busca la opción "Registro de Ficha de Admisión" y sigue los pasos.
         </v-list-item-title>
       </v-list-item>
 
@@ -316,3 +316,4 @@ const mostrarMensaje = (texto, color) => {
 .fadeIn { animation-name: fadeIn; }
 .border-dashed { border-style: dashed !important; border-width: 2px !important; }
 </style>
+
