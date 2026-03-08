@@ -1,12 +1,12 @@
 <template>
   <v-container class="bg-grey-lighten-4 fill-height align-start pt-md-8" fluid>
-
+    
     <div class="d-flex justify-end w-100 px-4 mb-4">
       <v-btn variant="text" color="teal-darken-3" prepend-icon="mdi-shield-account" size="small" to="/login">
         Acceso Administrativo
       </v-btn>
     </div>
-    
+
     <v-row justify="center" class="w-100 mx-auto" style="max-width: 1200px;">
       
       <v-col cols="12" md="7" lg="8">
@@ -21,74 +21,83 @@
           <v-card-text class="pa-4 pa-md-6">
             
             <div v-if="registroExitoso" class="text-center py-6 animated fadeIn">
-              <v-icon 
-                :icon="esNuevoRegistro ? 'mdi-check-circle' : 'mdi-information'" 
-                :color="esNuevoRegistro ? 'success' : 'blue-darken-2'" 
-                size="80" 
-                class="mb-4"
-              ></v-icon>
+  <v-icon 
+    :icon="esNuevoRegistro ? 'mdi-check-circle' : 'mdi-information'" 
+    :color="esNuevoRegistro ? 'success' : 'blue-darken-2'" 
+    size="80" 
+    class="mb-4"
+  ></v-icon>
 
-              <h2 class="text-h5 font-weight-black text-teal-darken-4 mb-2">
-                {{ esNuevoRegistro ? '¡Registro Exitoso!' : 'Número ya Registrado' }}
-              </h2>
-              
-              <p class="text-body-1 mb-6">
-                {{ esNuevoRegistro 
-                   ? 'Tus datos han sido recibidos correctamente en el área de Mantenimiento.' 
-                   : 'Este número ya se encuentra en nuestro sistema. No es necesario registrarte de nuevo.' 
-                }}
-              </p>
+  <h2 class="text-h5 font-weight-black text-teal-darken-4 mb-2">
+    {{ esNuevoRegistro ? '¡Registro Exitoso!' : 'Número ya Registrado' }}
+  </h2>
+  
+  <p class="text-body-1 mb-6">
+    {{ esNuevoRegistro 
+       ? 'Tus datos han sido recibidos correctamente en el área de Mantenimiento.' 
+       : 'Este número ya se encuentra en nuestro sistema. No es necesario registrarte de nuevo.' 
+    }}
+  </p>
 
-              <v-card variant="flat" color="teal-lighten-5" class="pa-6 border-dashed border-teal-darken-4 mb-6 rounded-xl text-left">
-                <h3 class="text-h6 font-weight-bold text-teal-darken-4 mb-4 text-center">
-                  <v-icon icon="mdi-laptop" class="mr-2"></v-icon>Pasos para tu Trámite Oficial
-                </h3>
-                
-                <v-list bg-color="transparent" density="compact">
-                  <v-list-item prepend-icon="mdi-monitor-screenshot" class="mb-2">
-                    <v-list-item-title class="text-wrap">
-                      <strong>Usa una computadora:</strong> El sistema oficial SII <strong>no funciona correctamente en celulares</strong>. Por favor, realiza el trámite en una PC o Laptop.
-                    </v-list-item-title>
-                  </v-list-item>
+  <v-card variant="flat" color="teal-lighten-5" class="pa-6 border-dashed border-teal-darken-4 mb-6 rounded-xl text-left">
+    <h3 class="text-h6 font-weight-bold text-teal-darken-4 mb-4 text-center">
+      <v-icon icon="mdi-laptop" class="mr-2"></v-icon>Pasos para tu Trámite Oficial
+    </h3>
+    
+    <v-list bg-color="transparent" density="compact" class="mb-4">
+      <v-list-item prepend-icon="mdi-monitor-screenshot" class="mb-2">
+        <v-list-item-title class="text-wrap">
+          <strong>Usa una computadora:</strong> El sistema oficial SII <strong>no funciona correctamente en celulares</strong>.
+        </v-list-item-title>
+      </v-list-item>
 
-                  <v-list-item prepend-icon="mdi-cursor-default-click" class="mb-2">
-                    <v-list-item-title class="text-wrap">
-                      <strong>Selecciona "Aspirantes":</strong> Dentro del portal oficial, busca la opción de registro para alumnos de nuevo ingreso.
-                    </v-list-item-title>
-                  </v-list-item>
+      <v-list-item prepend-icon="mdi-cursor-default-click" class="mb-2">
+        <v-list-item-title class="text-wrap">
+          <strong>Selecciona "Aspirantes":</strong> Dentro del portal oficial, busca la opción de registro para alumnos de nuevo ingreso.
+        </v-list-item-title>
+      </v-list-item>
 
-                  <v-list-item prepend-icon="mdi-file-check" class="mb-2">
-                    <v-list-item-title class="text-wrap">
-                      <strong>Requisitos:</strong> Sigue los requisitos que se solicitan; ten a la mano tu CURP y datos escolares.
-                    </v-list-item-title>
-                  </v-list-item>
+      <v-list-item prepend-icon="mdi-whatsapp" class="text-green-darken-3">
+        <v-list-item-title class="text-wrap">
+          <strong>¿Dudas?</strong> Contacta a los administradores del grupo; ellos resolverán tus dudas de inmediato.
+        </v-list-item-title>
+      </v-list-item>
+    </v-list>
 
-                  <v-list-item prepend-icon="mdi-whatsapp" class="text-green-darken-3">
-                    <v-list-item-title class="text-wrap">
-                      <strong>¿Problemas de registro?</strong> Contacta a los <strong>administradores del grupo de WhatsApp</strong>; ellos resolverán tus dudas de inmediato.
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
+    <v-divider class="mb-6"></v-divider>
+    <div class="text-subtitle-1 font-weight-bold text-teal-darken-4 mb-3 text-center">
+      <v-icon icon="mdi-play-circle" class="mr-1"></v-icon> ¿Cómo generar tu ficha?
+    </div>
+    
+    <v-responsive :aspect-ratio="16/9" class="rounded-lg elevation-4 mb-6">
+      <iframe
+        width="100%"
+        height="100%"
+        src="https://www.youtube.com/embed/NWoRq-t3JT8"
+        title="Tutorial de Registro SII"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+    </v-responsive>
+    <v-btn 
+      color="teal-darken-4" 
+      size="x-large" 
+      block 
+      elevation="4"
+      href="http://201.116.22.214:8080/sii2/controlEscolar/aspirante/registroFichaAspirante.xhtml" 
+      target="_blank"
+      prepend-icon="mdi-file-document-edit"
+      class="font-weight-bold mt-4"
+    >
+      Ir a Generar Ficha Oficial
+    </v-btn>
+  </v-card>
 
-                <v-btn 
-                  color="teal-darken-4" 
-                  size="x-large" 
-                  block 
-                  elevation="4"
-                  href="http://201.116.22.214:8080/sii2/controlEscolar/aspirante/registroFichaAspirante.xhtml" 
-                  target="_blank"
-                  prepend-icon="mdi-file-document-edit"
-                  class="font-weight-bold mt-4"
-                >
-                  Ir a Generar Ficha Oficial
-                </v-btn>
-              </v-card>
-
-              <v-btn variant="text" color="teal-darken-2" @click="limpiarFormulario">
-                <v-icon icon="mdi-arrow-left" class="mr-1"></v-icon> Volver al inicio
-              </v-btn>
-            </div>
-
+  <v-btn variant="text" color="teal-darken-2" @click="limpiarFormulario">
+    <v-icon icon="mdi-arrow-left" class="mr-1"></v-icon> Volver al inicio
+  </v-btn>
+</div>
             <v-form v-else ref="formRef" v-model="formularioValido" @submit.prevent="enviarFormulario">
               <v-alert type="info" variant="tonal" class="mb-5 text-caption text-md-body-2" density="compact">
                 Ingresa tus datos correctamente. El teléfono será usado para contactarte vía WhatsApp.
@@ -307,4 +316,3 @@ const mostrarMensaje = (texto, color) => {
 .fadeIn { animation-name: fadeIn; }
 .border-dashed { border-style: dashed !important; border-width: 2px !important; }
 </style>
-
