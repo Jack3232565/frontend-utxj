@@ -94,6 +94,17 @@
                 </v-chip>
               </template>
 
+              <template v-slot:item.inscrito="{ item }">
+                <div class="d-flex flex-column align-center">
+                  <v-chip :color="item.inscrito ? 'green-darken-3' : 'grey-lighten-2'" :class="item.inscrito ? 'text-white' : 'text-grey-darken-1'" size="x-small" label class="font-weight-bold mb-1">
+                    {{ item.inscrito ? 'SÍ' : 'NO' }}
+                  </v-chip>
+                  <span v-if="item.inscrito && item.folio_inscripcion" class="text-caption text-green-darken-4 font-weight-bold" style="font-size: 0.65rem;">
+                    Folio: {{ item.folio_inscripcion }}
+                  </span>
+                </div>
+              </template>
+
               <template v-slot:item.telefono="{ item }">
                 <div class="d-flex align-center">
                   <span class="font-weight-medium mr-2">{{ item.telefono }}</span>
@@ -145,7 +156,7 @@
 
         <v-window-item value="stats">
           <v-row dense>
-            <v-col cols="12" sm="6" md="3">
+            <v-col cols="12" sm="6" md="auto" class="flex-grow-1">
               <v-card class="mx-auto elevation-3 rounded-xl overflow-hidden bg-teal-darken-3" height="110">
                   <div class="d-flex flex-row align-center justify-space-between fill-height px-4">
                     <div>
@@ -156,7 +167,8 @@
                   </div>
               </v-card>
             </v-col>
-            <v-col cols="12" sm="6" md="3">
+            
+            <v-col cols="12" sm="6" md="auto" class="flex-grow-1">
               <v-card class="mx-auto elevation-2 rounded-xl d-flex align-center px-4 border bg-blue-lighten-5" height="110">
                  <v-avatar color="blue-darken-2" size="40" class="mr-3"><v-icon icon="mdi-school" size="24" color="white"></v-icon></v-avatar>
                  <div>
@@ -165,8 +177,18 @@
                  </div>
               </v-card>
             </v-col>
+
+            <v-col cols="12" sm="6" md="auto" class="flex-grow-1">
+              <v-card class="mx-auto elevation-2 rounded-xl d-flex align-center px-4 border bg-green-lighten-5" height="110">
+                <v-avatar color="green-darken-2" size="40" class="mr-3"><v-icon icon="mdi-account-check" size="24" color="white"></v-icon></v-avatar>
+                <div>
+                  <div class="text-h5 text-green-darken-4 font-weight-bold">{{ totalInscritos }}</div>
+                  <div class="text-caption text-green-darken-2 lh-1">Inscritos Oficiales</div>
+                </div>
+              </v-card>
+            </v-col>
             
-            <v-col cols="12" sm="6" md="3">
+            <v-col cols="12" sm="6" md="auto" class="flex-grow-1">
               <v-card class="mx-auto elevation-2 rounded-xl d-flex align-center px-4 border bg-red-lighten-5" height="110">
                  <v-avatar color="red-darken-2" size="40" class="mr-3"><v-icon icon="mdi-phone-alert" size="24" color="white"></v-icon></v-avatar>
                  <div>
@@ -175,7 +197,8 @@
                  </div>
               </v-card>
             </v-col>
-             <v-col cols="12" sm="6" md="3">
+            
+            <v-col cols="12" sm="6" md="auto" class="flex-grow-1">
               <v-card class="mx-auto elevation-2 rounded-xl d-flex align-center px-4 border" height="110" color="white">
                  <v-avatar color="amber-lighten-5" size="40" class="mr-3"><v-icon icon="mdi-calendar-check" size="24" color="amber-darken-4"></v-icon></v-avatar>
                  <div>
@@ -196,9 +219,23 @@
               </v-card>
             </v-col>
 
+
+            <v-col cols="12" md="6">
+              <v-card class="h-100 elevation-3 rounded-lg border cursor-pointer hover-effect" @click="abrirDialogoMetas">
+                <v-card-title class="text-caption font-weight-bold text-uppercase text-purple-darken-4 bg-grey-lighten-4 d-flex justify-space-between align-center">
+                  <span>2. 🎯 Metas de {{ nombreMesActual }} (Quedan {{ diasRestantes }} días)</span>
+                  <v-btn size="x-small" variant="text" icon="mdi-pencil" color="purple-darken-4"></v-btn>
+                </v-card-title>
+                <v-card-text style="height: 250px; position: relative;" class="pa-2">
+                  <Bar v-if="chartData.metas && chartData.metas.labels" :data="chartData.metas" :options="opcionesMetas" :plugins="[pluginLogos]" />
+                  <div v-else class="d-flex justify-center align-center fill-height text-grey">Calculando metas...</div>
+                </v-card-text>
+              </v-card>
+            </v-col>
+
             <v-col cols="12" md="6">
               <v-card class="h-100 elevation-3 rounded-lg border">
-                <v-card-title class="text-caption font-weight-bold text-uppercase text-blue-darken-4 bg-blue-lighten-5">2. Conversión a Preinscritos</v-card-title>
+                <v-card-title class="text-caption font-weight-bold text-uppercase text-blue-darken-4 bg-blue-lighten-5">3. Conversión a Preinscritos</v-card-title>
                 <v-card-text style="height: 280px; position: relative;" class="pa-2">
                   <Bar v-if="chartData.preinscritos.labels" :data="chartData.preinscritos" :options="opcionesCarreras" :plugins="[pluginLogos]" />
                   <div v-if="!chartData.preinscritos.labels || chartData.preinscritos.labels.length === 0" class="d-flex justify-center align-center fill-height text-grey">Aún no hay alumnos preinscritos.</div>
@@ -206,11 +243,29 @@
               </v-card>
             </v-col>
 
+            <v-col cols="12" md="6">
+              <v-card class="h-100 elevation-3 rounded-lg border">
+                <v-card-title class="text-caption font-weight-bold text-uppercase text-green-darken-4 bg-green-lighten-5">
+                  4. Conversión a Inscritos
+                </v-card-title>
+                <v-card-text style="height: 280px; position: relative;" class="pa-2">
+                  <Bar v-if="chartData.inscritos.labels" :data="chartData.inscritos" :options="opcionesCarreras" :plugins="[pluginLogos]" />
+                  <div v-if="!chartData.inscritos.labels || totalInscritos === 0" class="d-flex justify-center align-center fill-height text-grey">Aún no hay alumnos inscritos.</div>
+                </v-card-text>
+              </v-card>
+            </v-col>
+
+
+
+
             <v-col cols="12" sm="12" md="6">
               <v-card class="h-100 elevation-2 rounded-lg border overflow-hidden">
                 <v-card-title class="text-subtitle-2 font-weight-black text-uppercase py-3 px-4 d-flex align-center" style="background: linear-gradient(45deg, #f8f9fa, #ffffff);">
                   <v-icon start color="blue-darken-4" size="small" class="mr-2">mdi-chart-line</v-icon>
-                  <span class="text-blue-darken-4">3. Registro Mensual de Aspirantes</span>
+                 
+                <v-card-title class="text-caption font-weight-bold text-uppercase text-red-darken-4 bg-green-lighten-5">
+                  5. Registro Mensual de Aspirantes
+                </v-card-title>
                 </v-card-title>
                 
                 <v-divider></v-divider>
@@ -233,7 +288,7 @@
 
             <v-col cols="12" md="6">
               <v-card class="h-100 elevation-3 rounded-lg border mt-3">
-                <v-card-title class="text-caption font-weight-bold text-uppercase text-teal-darken-4 bg-grey-lighten-4">4. Top Localidades</v-card-title>
+                <v-card-title class="text-caption font-weight-bold text-uppercase text-teal-darken-4 bg-grey-lighten-4">6. Top Localidades</v-card-title>
                 <v-card-text style="height: 280px; position: relative;" class="pa-2">
                   <Bar v-if="chartData.localidades.labels" :data="chartData.localidades" :options="opcionesLocalidades" />
                 </v-card-text>
@@ -246,7 +301,7 @@
               <v-card class="h-100 elevation-3 rounded-lg border mt-3">
                 <v-card-title class="text-caption font-weight-bold text-uppercase text-teal-darken-4 bg-grey-lighten-4 d-flex justify-space-between align-center px-3 py-1">
                   <v-btn icon="mdi-chevron-left" variant="text" size="small" @click="mesAnterior" color="teal-darken-3"></v-btn>
-                  <span>5. Agenda ({{ nombreMesSeleccionado }})</span>
+                  <span>7. Agenda ({{ nombreMesSeleccionado }})</span>
                   <v-btn icon="mdi-chevron-right" variant="text" size="small" @click="mesSiguiente" color="teal-darken-3"></v-btn>
                 </v-card-title>
                 <v-card-text class="pa-2 pt-0">
@@ -280,14 +335,22 @@
             <v-container class="pa-0">
               <v-row dense>
                 
-                <v-col cols="12" sm="6" class="mb-3">
+                <v-col cols="12" sm="4" class="mb-3">
                   <v-card variant="tonal" :color="formItem.preinscrito ? 'blue-darken-2' : 'grey-darken-1'" class="pa-2 border h-100 d-flex align-center">
-                    <v-switch v-model="formItem.preinscrito" :label="formItem.preinscrito ? 'Preinscrito Oficialmente' : 'Solo Interesado'" color="blue-darken-3" hide-details inset></v-switch>
+                    <v-switch v-model="formItem.preinscrito" :label="formItem.preinscrito ? 'Preinscrito Oficialmente' : 'Solo Interesado'" color="blue-darken-3" hide-details inset density="compact"></v-switch>
                   </v-card>
                 </v-col>
-                <v-col cols="12" sm="6" class="mb-3">
+
+                <v-col cols="12" sm="4" class="mb-3">
                   <v-card variant="tonal" :color="formItem.contactado ? 'green-darken-2' : 'red-darken-1'" class="pa-2 border h-100 d-flex align-center">
-                    <v-switch v-model="formItem.contactado" :label="formItem.contactado ? 'Ya fue contactado' : 'Falta contactar'" color="green-darken-3" hide-details inset></v-switch>
+                    <v-switch v-model="formItem.contactado" :label="formItem.contactado ? 'Ya contactado' : 'Falta contactar'" color="green-darken-3" hide-details inset density="compact"></v-switch>
+                  </v-card>
+                </v-col>
+
+                <v-col cols="12" sm="4" class="mb-3">
+                  <v-card variant="tonal" :color="formItem.inscrito ? 'green-darken-4' : 'grey-darken-1'" class="pa-2 border h-100 d-flex flex-column justify-center">
+                    <v-switch v-model="formItem.inscrito" :label="formItem.inscrito ? 'Inscrito (Confirmado)' : 'No Inscrito'" color="green-darken-4" hide-details inset density="compact"></v-switch>
+                    <v-text-field v-if="formItem.inscrito" v-model="formItem.folio_inscripcion" label="Número de Folio" variant="underlined" density="compact" hide-details class="mt-2"></v-text-field>
                   </v-card>
                 </v-col>
 
@@ -371,6 +434,62 @@
       </v-card>
     </v-dialog>
 
+<v-dialog v-model="dialogoMetas" max-width="500px">
+      <v-card class="rounded-lg">
+        <v-toolbar color="green-darken-3" density="compact" dark>
+          <v-toolbar-title class="text-subtitle-1 font-weight-bold">Configurar Metas ({{ nombreMesSeleccionado }})</v-toolbar-title>
+          <v-btn icon="mdi-close" size="small" @click="dialogoMetas = false"></v-btn>
+        </v-toolbar>
+        
+        <v-card-text class="pa-4">
+          <v-alert type="info" variant="tonal" density="compact" class="mb-4 text-caption">
+            Ingresa la meta total de aspirantes que deseas alcanzar para este mes.
+          </v-alert>
+
+          <v-row v-for="(carrera, index) in carrerasList" :key="index" class="mb-4 align-center" dense>
+            <v-col cols="12" sm="6">
+              <div class="text-caption font-weight-bold">{{ carrera }}</div>
+              <v-chip v-if="metasMensuales[carrera].arrastre > 0" size="x-small" color="red-lighten-4" class="text-red-darken-4 mt-1">
+                +{{ metasMensuales[carrera].arrastre }} arrastre del mes pasado
+              </v-chip>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field 
+                v-model.number="formularioMetas[carrera].meta" 
+                label="Meta Base" 
+                prefix="Objetivo:"
+                variant="outlined" 
+                density="compact" 
+                type="number" 
+                hide-details
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        
+        <v-card-actions class="pa-3 bg-grey-lighten-4">
+          <v-spacer></v-spacer>
+          <v-btn color="grey" variant="text" @click="dialogoMetas = false">Cancelar</v-btn>
+          <v-btn color="blue-darken-3" variant="elevated" @click="guardarMetas">Actualizar Metas</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
+
+    <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="3000" location="bottom right" elevation="4">
+      <div class="text-subtitle-2 font-weight-medium">
+        <v-icon start :icon="snackbarColor === 'success' ? 'mdi-check-circle' : 'mdi-alert-circle'"></v-icon>
+        {{ snackbarTexto }}
+      </div>
+      <template v-slot:actions>
+        <v-btn variant="text" icon="mdi-close" size="small" @click="snackbar = false"></v-btn>
+      </template>
+    </v-snackbar>
+
+
+
+
   </v-main>
 </template>
 
@@ -393,7 +512,7 @@ const tab = ref('gestion');
 
 const listaAlumnos = ref([]);
 // Busca esta línea y déjala así:
-const chartData = ref({ carreras: {}, visitas: {}, localidades: {}, preinscritos: {}, mensual: {} });
+const chartData = ref({ carreras: {}, visitas: {}, localidades: {}, preinscritos: {}, inscritos: {}, mensual: {}, metas: {} });
 const cargando = ref(false);
 const busqueda = ref('');
 const filtroContactar = ref(false); // NUEVO FILTRO
@@ -408,6 +527,47 @@ const formularioValido = ref(false);
 const dialogoCitas = ref(false);
 const citasDelDiaSeleccionado = ref([]);
 const fechaSeleccionadaTexto = ref('');
+const totalInscritos = computed(() => listaAlumnos.value.filter(a => a.inscrito).length);
+
+// --- VARIABLES PARA EL TÍTULO DE METAS ---
+const nombreMesActual = computed(() => {
+  const mes = new Date().toLocaleString('es-MX', { month: 'long' });
+  return mes.charAt(0).toUpperCase() + mes.slice(1); // Transforma "abril" en "Abril"
+});
+
+const diasRestantes = computed(() => {
+  const hoy = new Date();
+  // Al pedir el día "0" del siguiente mes, JavaScript nos da el último día del mes actual
+  const ultimoDiaDelMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
+  return ultimoDiaDelMes - hoy.getDate();
+});
+
+
+// --- SISTEMA DE METAS ---
+const dialogoMetas = ref(false);
+const formularioMetas = ref({});
+
+// Solo guardamos la meta objetivo. Los logrados se calculan en vivo.
+const metasMensuales = ref({
+  'T.S.U. Mantenimiento Industrial': { meta: 10 },
+  'T.S.U. Mantenimiento Petróleo': { meta: 10 },
+  'T.S.U. Mantenimiento Soldadura': { meta: 10 },
+  'Ingeniería en Mantenimiento Industrial': { meta: 10 }
+});
+
+
+// --- SISTEMA DE NOTIFICACIONES (SNACKBAR) ---
+const snackbar = ref(false);
+const snackbarTexto = ref('');
+const snackbarColor = ref('success');
+
+const mostrarNotificacion = (texto, color = 'success') => {
+  snackbarTexto.value = texto;
+  snackbarColor.value = color;
+  snackbar.value = true;
+};
+
+
 
 const carrerasList = ['T.S.U. Mantenimiento Industrial', 'T.S.U. Mantenimiento Petróleo', 'T.S.U. Mantenimiento Soldadura', 'Ingeniería en Mantenimiento Industrial'];
 
@@ -487,6 +647,31 @@ const opcionesLocalidades = { indexAxis: 'y', responsive: true, maintainAspectRa
 const pluginLogos = { id: 'customLogos', afterDraw(chart) { const { ctx, scales: { x, y } } = chart; if (!chart.data.labels || chart.config.type !== 'bar' || chart.config.options.indexAxis === 'y') return; x.ticks.forEach((t, i) => { const l = chart.data.labels[i]; const m = mapaCarreras[l]; if (m && m.imgObj && m.imgObj.complete) { const xp = x.getPixelForTick(i); const yp = y.bottom + 10; try { ctx.drawImage(m.imgObj, xp - 15, yp, 30, 30); } catch(e){} } }); } };
 const generarColores = (n) => Array.from({ length: n }, (_, i) => ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'][i % 5]);
 
+
+const opcionesMetas = { 
+  responsive: true, 
+  maintainAspectRatio: false, 
+  layout: { padding: { bottom: 40 } }, // Deja espacio para los logos
+  plugins: { 
+    legend: { position: 'top' },
+    datalabels: { 
+      color: 'white', 
+      font: { weight: 'bold' },
+      formatter: (value) => value > 0 ? value : '' 
+    } 
+  }, 
+  scales: { 
+    x: { 
+      stacked: true, 
+      ticks: { display: false }, // OCULTA EL TEXTO
+      grid: { display: false } 
+    }, 
+    y: { stacked: true, beginAtZero: true } 
+  } 
+};
+
+
+
 // --- API & DATA ---
 const cargarTodo = async () => {
   cargando.value = true;
@@ -501,12 +686,9 @@ const procesarGraficas = (d) => {
     if(d.preinscritos) chartData.value.preinscritos = { labels: d.preinscritos.labels, datasets: [{ label: 'Preinscritos', backgroundColor: d.preinscritos.labels.map(l => mapaCarreras[l]?.color), data: d.preinscritos.data, borderRadius: 5, barPercentage: 0.6 }] };
     chartData.value.localidades = { labels: d.localidades.labels, datasets: [{ label: '', backgroundColor: generarColores(d.localidades.labels.length), data: d.localidades.data, borderRadius: 4 }] };
 
-
-const todosLosMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto'];
-    const mesActualIndex = new Date().getMonth(); // 0 = Enero, 1 = Febrero...
+    const todosLosMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto'];
+    const mesActualIndex = new Date().getMonth(); 
     
-    // FILTRO DINÁMICO: Solo mostramos desde Enero hasta el mes actual (máximo Agosto)
-    // Si estamos en Marzo, solo devolverá ['Enero', 'Febrero', 'Marzo']
     const mesesVisibles = todosLosMeses.slice(0, Math.min(mesActualIndex + 1, 8));
 
     chartData.value.mensual = {
@@ -514,21 +696,128 @@ const todosLosMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'J
       datasets: carrerasList.map(carrera => ({
         label: carrera.replace('T.S.U. Mantenimiento ', '').replace('Ingeniería en ', 'Ing. '),
         borderColor: mapaCarreras[carrera]?.color || '#ccc',
-        backgroundColor: mapaCarreras[carrera]?.color + '33', // Color con transparencia para el área
+        backgroundColor: mapaCarreras[carrera]?.color + '33', 
         data: mesesVisibles.map((_, index) => {
           return listaAlumnos.value.filter(a => {
             const fecha = new Date(a.fecha_registro);
             return a.carrera_interes === carrera && fecha.getMonth() === index;
           }).length;
         }),
-        tension: 0.4, // Curva suave en la línea
-        fill: true,   // Relleno bajo la línea para estilo "Area Chart"
+        tension: 0.4, 
+        fill: true,  
         pointRadius: 5,
         pointHoverRadius: 8
       }))
     };
 
+    chartData.value.inscritos = { 
+      labels: carrerasList, 
+      datasets: [{ 
+        label: 'Inscritos', 
+        backgroundColor: carrerasList.map(l => mapaCarreras[l]?.color), 
+        data: carrerasList.map(carrera => listaAlumnos.value.filter(a => a.inscrito && a.carrera_interes === carrera).length), 
+        borderRadius: 5, 
+        barPercentage: 0.6 
+      }] 
+    };
+
+    // La llamada correcta está aquí, DESPUÉS del punto y coma del objeto.
+    calcularMetas();
+
+}; // <--- AQUÍ TERMINA procesarGraficas. Todo lo de abajo es independiente.
+
+
+// --- CÁLCULO DE METAS DEL MES ACTUAL (BASADO EN EL GRÁFICO 5) ---
+// --- FUNCIONES HERMANAS (AFUERA DE procesarGraficas) ---
+
+// --- SISTEMA DE METAS ---
+const abrirDialogoMetas = () => {
+  formularioMetas.value = JSON.parse(JSON.stringify(metasMensuales.value));
+  dialogoMetas.value = true;
 };
+
+const calcularMetas = () => {
+  const datosLogrados = [];
+  const datosFaltantes = [];
+  const labelsMetas = [];
+
+  const mesActual = new Date().getMonth(); 
+  const anioActual = new Date().getFullYear();
+
+  carrerasList.forEach(carrera => {
+    const logradosEsteMes = listaAlumnos.value.filter(a => {
+      if (!a.fecha_registro) return false;
+      const fecha = new Date(a.fecha_registro);
+      return a.carrera_interes === carrera && 
+             fecha.getMonth() === mesActual && 
+             fecha.getFullYear() === anioActual;
+    }).length;
+    
+    const metaDefinida = metasMensuales.value[carrera].meta;
+    const faltantes = Math.max(0, metaDefinida - logradosEsteMes);
+    
+    labelsMetas.push(carrera);
+    datosLogrados.push(logradosEsteMes);
+    datosFaltantes.push(faltantes);
+  });
+
+  chartData.value.metas = {
+    labels: labelsMetas,
+    datasets: [
+      { label: 'Logrados este Mes', backgroundColor: '#27b092', data: datosLogrados, borderRadius: 3 },
+      { label: 'Faltantes para Meta', backgroundColor: '#27426b', data: datosFaltantes, borderRadius: 3 }
+    ]
+  };
+};
+
+const cargarMetas = async () => {
+  try {
+    const res = await api.get('/admin/metas');
+    res.data.forEach(m => {
+      if (metasMensuales.value[m.carrera]) {
+        // Guardamos todo el desglose
+        metasMensuales.value[m.carrera].meta = m.meta_base;
+        metasMensuales.value[m.carrera].arrastre = m.arrastre;
+        metasMensuales.value[m.carrera].total = m.meta_total;
+      }
+    });
+    calcularMetas();
+  } catch (e) {
+    console.error("Error al sincronizar con Neon", e);
+  }
+};
+
+const guardarMetas = async () => {
+  try {
+    cargando.value = true;
+    const payload = Object.keys(formularioMetas.value).map(carrera => ({
+      carrera: carrera,
+      meta_objetivo: formularioMetas.value[carrera].meta
+    }));
+    
+    await api.put('/admin/metas', payload);
+    
+    metasMensuales.value = JSON.parse(JSON.stringify(formularioMetas.value));
+    dialogoMetas.value = false;
+    calcularMetas();
+    
+    // --- AQUÍ CAMBIAMOS EL ALERT ---
+    mostrarNotificacion("Metas guardadas permanentemente en el servidor.", "success");
+    
+  } catch (e) {
+    // --- AQUÍ CAMBIAMOS EL ALERT DE ERROR ---
+    mostrarNotificacion("Error al persistir las metas. Revisa la conexión.", "error");
+  } finally {
+    cargando.value = false;
+  }
+};
+
+
+
+
+
+
+
 
 // --- CRUD & ACCIONES RÁPIDAS ---
 
@@ -549,11 +838,16 @@ const enviarWhatsapp = (i) => {
   window.open(`https://wa.me/${n}?text=${encodeURIComponent(`Hola ${i.nombre}, te contactamos de UTXJ.`)}`, '_blank'); 
 };
 
-const rowProps = (d) => { if (d.item.notas_admin && d.item.notas_admin.length > 2) return { class: 'bg-amber-lighten-5' }; return {}; };
+const rowProps = (d) => { 
+  if (d.item.inscrito) return { class: 'bg-green-lighten-5' }; // Fila verde si está inscrito
+  if (d.item.notas_admin && d.item.notas_admin.length > 2) return { class: 'bg-amber-lighten-5' }; 
+  return {}; 
+};
 
 const encabezados = [
   { title: 'Contactado', key: 'contactado', align: 'center', sortable: false }, 
   { title: 'Preinscrito', key: 'preinscrito', align: 'center' }, 
+  { title: 'Inscrito', key: 'inscrito', align: 'center' },
   { title: 'Nombre', key: 'nombre' }, { title: 'Apellido', key: 'ap_paterno' }, 
   { title: 'Teléfono', key: 'telefono' }, { title: 'Carrera', key: 'carrera_interes' }, 
   { title: 'Registro', key: 'fecha_registro', align: 'start', sortable: true }, // NUEVA COLUMNA
@@ -563,7 +857,7 @@ const encabezados = [
 
 const abrirDialogo = (item = null) => {
     if (item) { edicionID.value = item.id; formItem.value = { ...item }; } 
-    else { edicionID.value = null; formItem.value = { nombre: '', ap_paterno: '', ap_materno: '', localidad_origen: '', telefono: '', carrera_interes: 'T.S.U. Mantenimiento Industrial', visita_industrial: false, fecha_agenda: null, notas_admin: '', preinscrito: false, contactado: false }; }
+    else { edicionID.value = null; formItem.value = { nombre: '', ap_paterno: '', ap_materno: '', localidad_origen: '', telefono: '', carrera_interes: 'T.S.U. Mantenimiento Industrial', visita_industrial: false, fecha_agenda: null, notas_admin: '', preinscrito: false, contactado: false, inscrito: false, folio_inscripcion: ''}; }
     if(formRef.value) formRef.value.resetValidation();
     dialogoEditar.value = true;
 };
@@ -709,7 +1003,17 @@ const listaLocalidadesUnicas = computed(() => {
 
 const cerrarSesion = () => { localStorage.removeItem('token'); router.push('/login'); };
 
-onMounted(() => { precargarLogos(); cargarTodo(); });
+
+
+// CARGA INICIAL: Traemos TODO lo necesario para mostrar la vista (tabla, gráficas y metas)
+onMounted(() => { 
+  precargarLogos(); 
+  cargarTodo(); 
+  cargarMetas(); // <--- ESTA ES LA PIEZA QUE FALTA
+});
+
+
+
 
 
 
@@ -755,6 +1059,8 @@ onMounted(() => { precargarLogos(); cargarTodo(); });
   text-overflow: ellipsis;
 }
 
+.cursor-pointer { cursor: pointer; }
+.hover-effect:hover { border-color: #1d1b9a !important; }
 
 
 </style>
